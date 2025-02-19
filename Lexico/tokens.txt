@@ -1,0 +1,24 @@
+_begin
+
+_int a = 0;
+_int b;
+_bool c = _true;
+_float d = 0.5;
+
+_receba(b);
+a = b + b;
+
+_while (!b){
+_if (a :: 2*b & a > 10){
+	_seliga(“Conta certa”); 
+	c = _true;
+}
+_else{
+	_seliga(“Conta Errada”, a);
+	c = _false;
+}
+}
+
+b = _pot(a,2);
+
+_end
