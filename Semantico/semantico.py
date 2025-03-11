@@ -1,5 +1,30 @@
+from collections import Counter
+
+#################################################### VARIAVEIS GLOBAIS ###################################################################
+
+caminho_do_arquivo = 'tokens_saida_semantico.txt'
+aux = ["None", "variavel", "palavra_reservada"]
+tipos = ["int", "float", "bool"]
+tabela_de_tipos = []
+linhas_arquivo = []
+variaveis = []
+this = False
+
+######################################################### FUNÇÕES ###############################################################
+
+def verify_var(palavra):
+    if palavra[1] == 'variavel' or palavra[1] == 'None' or palavra[1]== 'palavra_reservada':   
+        var = get_type(palavra[2])
+        if var != '_pot':
+            variaveis.append(var)
+            return False
+        else: return var
+    else: 
+        variaveis.append(palavra[1])
+        return False
+
 def get_type(nome):
-    if nome in ['int', 'float', 'bool']:
+    if nome in ['int', 'float', 'bool', '_pot']:
         return nome
     if nome in ['_true', '_false']:
         return 'bool'
@@ -7,11 +32,16 @@ def get_type(nome):
         if entry["nome"] == nome:
             return entry["tipo"]
 
-from collections import Counter
+def verify_types(linha, ops):
+    valid_types = {"float", "int", "bool"}
 
-def verify_types(ops):
+    # Verifica se todos os elementos pertencem ao conjunto válido
+    if any(op not in valid_types for op in ops):
+        print(f"Erro: tipo inválido encontrado na linha {linha}")
+        return
+
     counts = Counter(ops)
-    
+
     float_count = counts.get("float", 0)
     int_count = counts.get("int", 0)
     bool_count = counts.get("bool", 0)
@@ -19,22 +49,23 @@ def verify_types(ops):
     non_zero_counts = sum(1 for count in [float_count, int_count, bool_count] if count > 0)
 
     if non_zero_counts > 1:
-        print("tipos conflitantes")
-    else:
-        print("sem conflitos")
+        primeiro_operando = ops[0] 
 
-caminho_do_arquivo = 'tokens_saida_semantico.txt'
+        if primeiro_operando == "int" and float_count > 0:
+            print(f"Conflito de tipo encontrado na linha {linha}, {ops}: requer widening (diminuir float para int)")
+        elif primeiro_operando == "float" and int_count > 0:
+            print(f"Conflito de tipo encontrado na linha {linha}, {ops}: requer expansão (aumentar int para float)")
+        elif primeiro_operando == "bool" and (int_count > 0 or float_count > 0):
+            print(f"Erro na linha {linha}: bool não pode ser misturado com int ou float")
+        elif (primeiro_operando == "int" or primeiro_operando == "float") and bool_count > 0:
+            print(f"Erro na linha {linha}: {primeiro_operando} não pode ser misturado com bool")
+        else:
+            print(f"Conflito de tipo encontrado na linha {linha}, {ops}: requer conversão")
 
-linhas_arquivo = []
+######################################################### MAIN ###################################################################
 
 with open(caminho_do_arquivo, 'r') as arquivo:
     linhas_arquivo = [linha.strip() for linha in arquivo]
-
-tabela_de_tipos = []
-this = False
-tipos = ["int", "float", "bool"]
-aux = ["None", "variavel", "palavra_reservada"]
-variaveis = []
 
 for i in range(len(linhas_arquivo)):
     palavras = linhas_arquivo[i].split()
@@ -55,47 +86,64 @@ for i in range(len(linhas_arquivo)):
             if this == False:
                 print('A variável', palavra3, 'não foi declarada')
         this = False
+        cont = 1
 
         if palavra2 in tipos or palavra2 == 'variavel': #se for int,float bool ou uma variavel
-            proxima_palavra = linhas_arquivo[i + 1].split() 
+            proxima_palavra = linhas_arquivo[i + cont].split() 
+            cont += 1
 
             if proxima_palavra[2] == '=':
-                if palavra2 == 'variavel' or palavra2 == 'None' or palavra2== 'palavra_reservada': 
-                    variaveis.append(get_type(palavra3))
-                else: variaveis.append(palavra2)
-            
-                proxima_palavra = linhas_arquivo[i + 2].split() 
-
+                verify_var(palavras)
+                proxima_palavra = linhas_arquivo[i + cont].split() 
+                cont += 1
             else: continue
 
-            if proxima_palavra[1] == 'variavel' or proxima_palavra[1] == 'None' or proxima_palavra[1]== 'palavra_reservada':   
-                variaveis.append(get_type(proxima_palavra[2]))
-            else: variaveis.append(proxima_palavra[1])
-                        
-            proxima_palavra = linhas_arquivo[i + 3].split() 
-            cont = 4
+            if verify_var(proxima_palavra):
+                cont += 1
+                proxima_palavra = linhas_arquivo[i + cont].split() 
+                verify_var(proxima_palavra)           
+                cont += 2  
+                proxima_palavra = linhas_arquivo[i + cont].split() 
+                verify_var(proxima_palavra)      
+
+            proxima_palavra = linhas_arquivo[i + cont].split() 
+            cont += 1
+
 
             while proxima_palavra[1] in ['Op_aritmetico', 'Op_relacional']:
-                proxima_palavra = linhas_arquivo[i + cont].split() 
 
-                if proxima_palavra[1] in tipos or proxima_palavra[1] == 'variavel' or proxima_palavra[1] == 'None' or proxima_palavra[1] == 'palavra_reservada': #se for int,float bool ou uma variavel
-                    if proxima_palavra[1] == 'variavel' or proxima_palavra[1] == 'None' or proxima_palavra[1]== 'palavra_reservada': 
-                        variaveis.append(get_type(proxima_palavra[2]))
-                    else: variaveis.append(proxima_palavra[1])
-                cont +=1
+                if variaveis[0] == 'bool' and proxima_palavra[1] == 'Op_aritmetico':
+                    raise ValueError(f'ERRO DE OPERADOR: BOOL e {proxima_palavra[1]} não podem ser usados juntos')
+
+                if (variaveis[0] == 'int' or variaveis[0] == 'float') and proxima_palavra[1] == 'Op_relacional':
+                    raise ValueError(f'ERRO DE OPERADOR: {variaveis[0]} e {proxima_palavra[1]} não podem ser usados juntos')
+
+                proxima_palavra = linhas_arquivo[i + cont].split() 
+                cont += 1
+
+                if verify_var(proxima_palavra):
+                    cont += 1
+                    proxima_palavra = linhas_arquivo[i + cont].split() 
+                    verify_var(proxima_palavra)           
+                    cont += 2  
+                    proxima_palavra = linhas_arquivo[i + cont].split() 
+                    verify_var(proxima_palavra)      
+               
+
                 proxima_palavra = linhas_arquivo[i + cont].split()
-                cont +=1
+                cont += 1
 
         if variaveis.__len__() == 0:
             continue
-        # verify_types(variaveis)
-        print(variaveis)
+        verify_types(proxima_palavra[0], variaveis)
+        # print(variaveis)
         variaveis = []
 
 
-
-print('=================================================================================')
-print('TABELA:')
-print("Tabela de nomes e tipos:")
+# print('=================================================================================')
+# print('TABELA:')
+# print("Tabela de nomes e tipos:")
 for entrada in tabela_de_tipos:
-    print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
+    #print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
+    if entrada['used'] == False:
+        print(f"A variavel {entrada['nome']} foi declarada, mas nunca usada")

@@ -1,4 +1,3 @@
-# Exemplo de tabela de análise (adaptar conforme a gramática)
 tabela = {
     '<prog>': {
         '_begin': ['_begin', '<decls>', '<contx>', '_end'],

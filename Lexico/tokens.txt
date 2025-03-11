@@ -1,24 +1,25 @@
 _begin
 
-_int a = 0;
-_int b;
-_bool c = _true;
-_float d = 0.5;
+_int primeira = 0;
+_int segunda;
+_bool terceira = _true;
+_float quarta = 12;
 
-_receba(b);
-a = b + b;
+_receba(segunda);
+primeira = segunda + segunda;
 
-_while (!b){
-_if (a :: 2*b & a > 10){
+_while (!segunda){
+_if (primeira :: 2*terceira & primeira > 10){
 	_seliga(“Conta certa”); 
-	c = _true;
+	terceira = _true;
 }
+
 _else{
-	_seliga(“Conta Errada”, a);
-	c = _false;
+	_seliga(“Conta Errada”, primeira);
+	terceira = _false;
 }
 }
 
-b = _pot(a,2);
+segunda = _pot(primeira,2);
 
 _end

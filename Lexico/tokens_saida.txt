@@ -2,6 +2,7 @@ _begin
 _int
 id
 =
+num
 ;
 _int
 id
