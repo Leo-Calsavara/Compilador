@@ -10,7 +10,7 @@ id
 _bool
 id
 =
-_true
+_false
 ;
 _float
 id

@@ -150,36 +150,36 @@ while i < len(tokens):
     elif tokens[i] == '!':
         if tokens[i+1] == '=':
             adicionar_par_sintatico(linha, '!=')
-            adiciona_par_semantico(linha, '!=', None)
+            adiciona_par_semantico(linha, '!=', 'Op_logico')
             i+=2
         else:    
             adicionar_par_sintatico(linha, '!')
-            adiciona_par_semantico(linha, '!', None)
+            adiciona_par_semantico(linha, '!', 'Op_logico')
             i += 1
 
     elif tokens[i] == '>':
         if i + 1 < len(tokens) and tokens[i+1] == '=':
             adicionar_par_sintatico(linha, '>=')
-            adiciona_par_semantico(linha, '>=', None)
+            adiciona_par_semantico(linha, '>=', 'Op_logico')
             i += 2
         else:
             adicionar_par_sintatico(linha, '>')
-            adiciona_par_semantico(linha, '>', None)
+            adiciona_par_semantico(linha, '>', 'Op_logico')
             i += 1
 
     elif tokens[i] == '<':
         if i + 1 < len(tokens) and tokens[i+1] == '=':
             adicionar_par_sintatico(linha, '<=')
-            adiciona_par_semantico(linha, '<=', None)
+            adiciona_par_semantico(linha, '<=', 'Op_logico')
             i += 2
         else:
             adicionar_par_sintatico(linha, '<')
-            adiciona_par_semantico(linha, '<', None)
+            adiciona_par_semantico(linha, '<', 'Op_logico')
             i += 1
 
     elif tokens[i] == '=':
         adicionar_par_sintatico(linha, '=')
-        adiciona_par_semantico(linha, '=', None)
+        adiciona_par_semantico(linha, '=', 'Op_logico')
         i += 1
     
     elif tokens[i] == '(':

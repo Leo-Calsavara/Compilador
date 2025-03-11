@@ -56,9 +56,9 @@ def verify_types(linha, ops):
         elif primeiro_operando == "float" and int_count > 0:
             print(f"Conflito de tipo encontrado na linha {linha}, {ops}: requer expansão (aumentar int para float)")
         elif primeiro_operando == "bool" and (int_count > 0 or float_count > 0):
-            print(f"Erro na linha {linha}: bool não pode ser misturado com int ou float")
+             raise ValueError(f"Erro na linha {linha}: bool não pode ser misturado com int ou float")
         elif (primeiro_operando == "int" or primeiro_operando == "float") and bool_count > 0:
-            print(f"Erro na linha {linha}: {primeiro_operando} não pode ser misturado com bool")
+            raise ValueError(f"Erro na linha {linha}: {primeiro_operando} não pode ser misturado com bool")
         else:
             print(f"Conflito de tipo encontrado na linha {linha}, {ops}: requer conversão")
 
@@ -110,12 +110,12 @@ for i in range(len(linhas_arquivo)):
             cont += 1
 
 
-            while proxima_palavra[1] in ['Op_aritmetico', 'Op_relacional']:
+            while proxima_palavra[1] in ['Op_aritmetico', 'Op_relacional', 'Op_logico']:
 
                 if variaveis[0] == 'bool' and proxima_palavra[1] == 'Op_aritmetico':
                     raise ValueError(f'ERRO DE OPERADOR: BOOL e {proxima_palavra[1]} não podem ser usados juntos')
 
-                if (variaveis[0] == 'int' or variaveis[0] == 'float') and proxima_palavra[1] == 'Op_relacional':
+                if (variaveis[0] == 'int' or variaveis[0] == 'float') and (proxima_palavra[1] == 'Op_relacional' or proxima_palavra[1] == 'Op_logico'):
                     raise ValueError(f'ERRO DE OPERADOR: {variaveis[0]} e {proxima_palavra[1]} não podem ser usados juntos')
 
                 proxima_palavra = linhas_arquivo[i + cont].split() 
@@ -136,14 +136,13 @@ for i in range(len(linhas_arquivo)):
         if variaveis.__len__() == 0:
             continue
         verify_types(proxima_palavra[0], variaveis)
-        # print(variaveis)
         variaveis = []
 
 
-# print('=================================================================================')
-# print('TABELA:')
-# print("Tabela de nomes e tipos:")
+print('=================================================================================')
+print('TABELA:')
+print("Tabela de nomes e tipos:")
 for entrada in tabela_de_tipos:
-    #print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
+    print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
     if entrada['used'] == False:
-        print(f"A variavel {entrada['nome']} foi declarada, mas nunca usada")
+        print(f"WARNING:\nA variavel {entrada['nome']} foi declarada, mas nunca usada")

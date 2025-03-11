@@ -2,8 +2,8 @@ _begin
 
 _int primeira = 0;
 _int segunda;
-_bool terceira = _true;
-_float quarta = 12;
+_bool terceira = _false;
+_float quarta = 12.1;
 
 _receba(segunda);
 primeira = segunda + segunda;
