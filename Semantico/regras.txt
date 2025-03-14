@@ -1,0 +1,13 @@
+Alunos: Isadora Coelho e Leonardo Calsavara
+
+O analisador semântico em questão realiza as seguintes operações:
+    1. Cria uma tabela de símbolos com todas as variáveis declaradas no código, armazenando seu tipo e se foi usada (todas são inicializadas como False);
+    2. Verifica se as variáveis declaradas foram utilizadas em algum ponto do código;
+    3. Verifica se todas as variáveis utilizadas no código foram declaradas;
+    4. Verifica se tipos de variáveis em atribuições e operações são compatíveis de forma que:
+        a. O tipo Bool não pode ser utilizado com nenhum outro tipo a não ser a si mesmo;
+        b. O tipo int pode ser utilizado com float e vice versa, com o uso de operações de expansão e widening;
+            i. Caso um int seja atribuído a um float ele é aumentado, de forma a ser convertido em um float;
+            ii. Caso um float seja atribuído a um int ele é diminuído (widening), de forma a ser convertido em um int.
+        c. Os tipos int e float podem apenas utilizar operadores aritméticos;
+        d. O tipo bool pode apenas utilizar operadores relacionais e lógicos.

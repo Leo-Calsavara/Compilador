@@ -84,7 +84,7 @@ for i in range(len(linhas_arquivo)):
                     entry["used"] = True
                     this = True
             if this == False:
-                print('A variável', palavra3, 'não foi declarada')
+                raise ValueError('A variável', palavra3, 'não foi declarada')
         this = False
         cont = 1
 
@@ -139,10 +139,10 @@ for i in range(len(linhas_arquivo)):
         variaveis = []
 
 
-print('=================================================================================')
-print('TABELA:')
-print("Tabela de nomes e tipos:")
+# print('=================================================================================')
+# print('TABELA:')
+#print("Tabela de nomes e tipos:")
 for entrada in tabela_de_tipos:
-    print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
+    #print(f"Nome: {entrada['nome']}, Tipo: {entrada['tipo']}, Usada: {entrada['used']}")
     if entrada['used'] == False:
         print(f"WARNING:\nA variavel {entrada['nome']} foi declarada, mas nunca usada")
